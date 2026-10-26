@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tengo una propuesta para vos... 🎬❤️</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff3366;
+            --primary-glow: rgba(255, 51, 102, 0.45);
+            --secondary: #ff758c;
+            --accent-gold: #ffd166;
+            --christmas-green: #2ecc71;
+            --bg-dark: #0d0714;
+            --card-bg: rgba(26, 14, 38, 0.75);
+            --card-border: rgba(255, 117, 140, 0.25);
+            --text-main: #ffffff;
+            --text-sub: #f3d2df;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 16px;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 51, 102, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(138, 43, 226, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 105, 180, 0.12) 0%, transparent 65%);
+        }
+
+        /* Canvas de partículas de fondo */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Canvas de confeti para celebración */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        /* Contenedor principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 32px;
+            padding: 34px 24px;
+            text-align: center;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(255, 51, 102, 0.18),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            animation: cardEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(35px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Badge Superior */
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: pulseSoft 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseSoft {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        /* Hero Emoji Flotante */
+        .hero-emoji-box {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .hero-emoji {
+            font-size: 3.8rem;
+            display: inline-block;
+            filter: drop-shadow(0 10px 15px rgba(255, 51, 102, 0.4));
+            animation: floatEmoji 3.2s infinite ease-in-out;
+        }
+
+        .sparkle-icon {
+            position: absolute;
+            font-size: 1.3rem;
+            animation: twinkle 2s infinite ease-in-out alternate;
+        }
+
+        .sparkle-1 { top: -6px; right: -12px; animation-delay: 0.2s; }
+        .sparkle-2 { bottom: 0px; left: -14px; animation-delay: 1.1s; }
+
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(4deg); }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.7); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Textos */
+        .pre-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.35rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(255, 117, 140, 0.3);
+        }
+
+        .main-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 12px;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+            margin-bottom: 26px;
+            font-weight: 300;
+            padding: 0 10px;
+        }
+
+        /* Botones Principales */
+        .buttons-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            min-height: 125px;
+            justify-content: center;
+        }
+
+        .btn {
+            position: relative;
+            padding: 15px 26px;
+            font-size: 1.12rem;
+            font-weight: 700;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            user-select: none;
+            width: 100%;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff3366, #ff6b8b);
+            color: white;
+            box-shadow: 0 8px 25px var(--primary-glow);
+            animation: pulseGlow 2.4s infinite ease-in-out;
+        }
+
+        .btn-yes:hover, .btn-yes:active {
+            transform: scale(1.03);
+            box-shadow: 0 12px 32px rgba(255, 51, 102, 0.65);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 8px 25px var(--primary-glow); }
+            50% { box-shadow: 0 10px 35px rgba(255, 51, 102, 0.7); }
+        }
+
+        .btn-no {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e0d0e6;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            font-size: 0.98rem;
+            font-weight: 500;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .btn-no:hover, .btn-no:active {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .playful-hint {
+            font-size: 0.88rem;
+            color: #ff9cb5;
+            min-height: 22px;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+        }
+
+        .playful-hint.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================================
+           SECCIÓN DE GÉNEROS (PANTALLA 2)
+           ============================================================ */
+        .genres-view {
+            display: none;
+            opacity: 0;
+            transform: scale(0.96);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .genres-view.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .genres-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0 16px;
+        }
+
+        .genre-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
+            padding: 13px 10px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .genre-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 117, 140, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .genre-btn.selected {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.35), rgba(255, 117, 140, 0.45));
+            border-color: var(--primary);
+            box-shadow: 0 0 18px rgba(255, 51, 102, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* GÉNERO NAVIDEÑO DESTACADO (PROTAGONISTA) */
+        .genre-btn-christmas {
+            grid-column: span 2;
+            position: relative;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.25), rgba(231, 76, 60, 0.3));
+            border: 1.5px solid rgba(255, 215, 0, 0.65);
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.2), inset 0 0 15px rgba(255, 215, 0, 0.15);
+            padding: 15px 14px;
+            font-size: 1.05rem;
+            animation: festiveGlow 2.8s infinite ease-in-out;
+        }
+
+        .genre-btn-christmas .fav-tag {
+            position: absolute;
+            top: -9px;
+            right: 14px;
+            background: linear-gradient(135deg, #ffd166, #ff9f1c);
+            color: #4a2c00;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @keyframes festiveGlow {
+            0%, 100% {
+                border-color: rgba(255, 215, 0, 0.5);
+                box-shadow: 0 4px 18px rgba(46, 204, 113, 0.2);
+            }
+            50% {
+                border-color: rgba(255, 215, 0, 0.95);
+                box-shadow: 0 6px 26px rgba(255, 215, 0, 0.35);
+            }
+        }
+
+        /* Mensaje de confirmación del género elegido */
+        .genre-feedback-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 117, 140, 0.3);
+            border-radius: 18px;
+            padding: 16px;
+            margin-top: 14px;
+            animation: fadeIn 0.4s ease forwards;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-title {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #ffd8e2;
+            margin-bottom: 5px;
+        }
+
+        .feedback-desc {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* Botón de WhatsApp */
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            margin-top: 16px;
+            animation: pulseGreen 2.2s infinite ease-in-out;
+            display: none;
+        }
+
+        .btn-whatsapp.visible {
+            display: flex;
+        }
+
+        .btn-whatsapp:hover, .btn-whatsapp:active {
+            transform: scale(1.03);
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 8px 22px rgba(37, 211, 102, 0.35); }
+            50% { box-shadow: 0 12px 30px rgba(37, 211, 102, 0.65); }
+        }
+
+        /* Vista Reconsideración */
+        .rejection-view {
+            display: none;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .rejection-view.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .btn-reconsider {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 18px;
+        }
+
+        .footer-note {
+            margin-top: 22px;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 26px 18px;
+            }
+            .main-title {
+                font-size: 1.45rem;
+            }
+            .genre-btn {
+                font-size: 0.88rem;
+                padding: 12px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Partículas flotantes de fondo (corazones, estrellas, cine) -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Canvas de confeti para la celebración -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <div class="container">
+        <!-- PANTALLA 1: PROPUESTA INICIAL -->
+        <div class="card" id="mainCard">
+            
+            <div class="header-badge">
+                <span>🎬 Propuesta Especial ✨</span>
+            </div>
+
+            <div class="hero-emoji-box">
+                <span class="hero-emoji" id="heroEmoji">🎬</span>
+                <span class="sparkle-icon sparkle-1">✨</span>
+                <span class="sparkle-icon sparkle-2">❤️</span>
+            </div>
+
+            <p class="pre-title">Tengo una propuesta para vos... ❤️</p>
+            
+            <h1 class="main-title">
+                ¿Aceptás ver una peli conmigo? 🎬❤️
+            </h1>
+
+            <p class="subtitle">
+                Una buena historia y la mejor compañía garantizada 😉
+            </p>
+
+            <!-- Botones -->
+            <div class="buttons-group" id="btnGroup">
+                <button class="btn btn-yes" id="btnYes">
+                    <span>❤️ Sí, acepto</span>
+                </button>
+
+                <button class="btn btn-no" id="btnNo">
+                    <span id="noBtnText">😏 No</span>
+                </button>
+            </div>
+
+            <div class="playful-hint" id="playfulHint"></div>
+
+            <div class="footer-note">
+                Hecho especialmente para vos con mucho cariño ✨
+            </div>
+        </div>
+
+        <!-- PANTALLA 2: SELECCIÓN DE GÉNERO TRAS ACEPTAR -->
+        <div class="card genres-view" id="genresCard">
+            
+            <div class="header-badge" style="color: #4ade80; border-color: rgba(74, 222, 128, 0.4); background: rgba(74, 222, 128, 0.12);">
+                <span>✨ ¡Plan Confirmado! ✨</span>
+            </div>
+
+            <p class="pre-title" style="color: #ff9cb5;">
+                Sabía que ibas a decir que sí ❤️
+            </p>
+
+            <h1 class="main-title" style="font-size: 1.5rem; margin-bottom: 6px;">
+                Ahora decime... ¿qué género te gustaría ver? 🎬
+            </h1>
+
+            <p class="subtitle" style="margin-bottom: 14px; font-size: 0.9rem;">
+                Elegí la que más te guste para hoy:
+            </p>
+
+            <!-- Grid de Géneros -->
+            <div class="genres-grid">
+                <!-- Género Navideño Especialmente Destacado -->
+                <button class="genre-btn genre-btn-christmas" data-genre="Navideña" data-type="christmas">
+                    <span class="fav-tag">⭐ Tu favorita</span>
+                    <span>🎄 Navideña</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Romance">
+                    <span>❤️ Romance</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Comedia">
+                    <span>😂 Comedia</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Terror">
+                    <span>😱 Terror</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Drama">
+                    <span>🥹 Drama</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Fantasía">
+                    <span>✨ Fantasía</span>
+                </button>
+
+                <button class="genre-btn" data-genre="Acción">
+                    <span>🔥 Acción</span>
+                </button>
+            </div>
+
+            <!-- Tarjeta de feedback personalizada según el género -->
+            <div class="genre-feedback-card" id="genreFeedback">
+                <div class="feedback-title" id="feedbackTitle"></div>
+                <div class="feedback-desc" id="feedbackDesc"></div>
+            </div>
+
+            <!-- Botón de WhatsApp con mensaje preparado -->
+            <a href="#" class="btn btn-whatsapp" id="btnWhatsApp">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
+                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.53 7.53C9.36 7.53 9.09 7.6 8.87 7.84C8.65 8.08 8.02 8.67 8.02 9.87C8.02 11.08 8.9 12.24 9.02 12.41C9.15 12.57 10.74 15.03 13.18 16.08C13.76 16.33 14.21 16.48 14.57 16.59C15.15 16.78 15.68 16.75 16.1 16.69C16.57 16.62 17.55 16.09 17.76 15.51C17.96 14.92 17.96 14.42 17.9 14.32C17.84 14.21 17.68 14.15 17.43 14.03C17.18 13.9 15.72 13.18 15.45 13.08C15.18 12.99 14.98 12.94 14.79 13.24C14.59 13.53 14.02 14.21 13.85 14.41C13.68 14.6 13.51 14.63 13.26 14.5C13.01 14.38 12.22 14.12 11.27 13.28C10.54 12.62 10.04 11.81 9.9 11.56C9.75 11.31 9.88 11.18 10.01 11.05C10.12 10.94 10.26 10.76 10.39 10.61C10.51 10.46 10.56 10.35 10.64 10.19C10.72 10.02 10.68 9.88 10.62 9.75C10.56 9.63 9.98 8.21 9.75 7.64C9.51 7.09 9.28 7.16 9.1 7.16C8.94 7.15 8.75 7.15 8.56 7.15L9.53 7.53Z"/>
+                </svg>
+                <span id="btnWhatsAppText">Avisarme por WhatsApp ❤️</span>
+            </a>
+        </div>
+
+        <!-- PANTALLA 3: RESPUESTA AMABLE SI RECHAZA DEFINITIVAMENTE -->
+        <div class="card rejection-view" id="rejectionCard">
+            <div class="hero-emoji-box">
+                <span class="hero-emoji">🥺🎬</span>
+            </div>
+
+            <h1 class="main-title" style="margin-bottom: 12px;">
+                ¡Bueno, no pasa nada! 😌
+            </h1>
+
+            <p class="subtitle" style="font-size: 1.02rem;">
+                La propuesta queda abierta para cuando tengas ganas de ver una peli juntos. ¡Cero presión! ✨
+            </p>
+
+            <button class="btn btn-reconsider" id="btnReconsider">
+                <span>Pensándolo bien... ¡quiero ver una peli! ❤️</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           CONFIGURACIÓN DEL NÚMERO Y WHATSAPP
+           ============================================================ */
+        const numeroWhatsApp = "595986468762";
+
+        // Elementos DOM
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const noBtnText = document.getElementById('noBtnText');
+        const playfulHint = document.getElementById('playfulHint');
+        const mainCard = document.getElementById('mainCard');
+        const genresCard = document.getElementById('genresCard');
+        const rejectionCard = document.getElementById('rejectionCard');
+        const btnWhatsApp = document.getElementById('btnWhatsApp');
+        const btnWhatsAppText = document.getElementById('btnWhatsAppText');
+        const btnReconsider = document.getElementById('btnReconsider');
+        const heroEmoji = document.getElementById('heroEmoji');
+        const genreFeedback = document.getElementById('genreFeedback');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackDesc = document.getElementById('feedbackDesc');
+
+        /* ============================================================
+           COMPORTAMIENTO DEL BOTÓN "NO" (DIVERTIDO Y RESPETUOSO)
+           ============================================================ */
+        let noClickCount = 0;
+        let yesScale = 1;
+
+        const playfulResponses = [
+            { text: "¿Segura? 🥺", hint: "Prometo que la película va a estar buenísima..." },
+            { text: "Dale una oportunidad a la peli 🎬", hint: "¡Podés elegir vos la que quieras!" },
+            { text: "¿Ni siquiera una cortita? ✨", hint: "Prometo buena onda y cero spoilers 😌" },
+            { text: "Bueno... pensalo 😌", hint: "Mirá que el botón de 'Sí' se ve cada vez mejor..." },
+            { text: "¿Última palabra? 🤔", hint: "Si tocás otra vez te prometo que no insisto más." },
+            { text: "No, en serio 🤍", hint: "Entendido, sin presión 😊" }
+        ];
+
+        btnNo.addEventListener('click', () => {
+            noClickCount++;
+
+            if (noClickCount <= playfulResponses.length - 1) {
+                const current = playfulResponses[noClickCount - 1];
+                noBtnText.textContent = current.text;
+                playfulHint.textContent = current.hint;
+                playfulHint.classList.add('visible');
+
+                // Aumentar suavemente el botón Sí
+                yesScale += 0.08;
+                btnYes.style.transform = `scale(${yesScale})`;
+
+                // Movimiento juguetón pero controlado
+                const randomX = (Math.random() - 0.5) * 40;
+                const randomY = (Math.random() - 0.5) * 15;
+                btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+                const emojis = ['🥺', '🎬', '👀', '✨', '🎥'];
+                heroEmoji.textContent = emojis[noClickCount % emojis.length];
+
+            } else {
+                // Si la persona insiste, se respeta totalmente su decisión
+                mainCard.style.display = 'none';
+                rejectionCard.classList.add('active');
+            }
+        });
+
+        // Botón para reconsiderar
+        btnReconsider.addEventListener('click', () => {
+            rejectionCard.classList.remove('active');
+            mainCard.style.display = 'block';
+            noClickCount = 0;
+            noBtnText.textContent = "😏 No";
+            playfulHint.textContent = "";
+            playfulHint.classList.remove('visible');
+            btnNo.style.transform = "none";
+            yesScale = 1;
+            btnYes.style.transform = "scale(1)";
+            heroEmoji.textContent = "🎬";
+        });
+
+        /* ============================================================
+           ACCIÓN AL PRESIONAR "SÍ, ACEPTO"
+           ============================================================ */
+        btnYes.addEventListener('click', () => {
+            // Iniciar confeti y corazones
+            startConfettiCelebration();
+
+            // Transición suave hacia la pantalla de géneros
+            mainCard.style.transform = 'scale(0.92) translateY(-20px)';
+            mainCard.style.opacity = '0';
+
+            setTimeout(() => {
+                mainCard.style.display = 'none';
+                genresCard.classList.add('active');
+            }, 350);
+        });
+
+        /* ============================================================
+           SELECCIÓN DE GÉNERO
+           ============================================================ */
+        const genreButtons = document.querySelectorAll('.genre-btn');
+        let selectedGenre = null;
+
+        function updateWhatsAppLink(genre) {
+            let baseMessage = "Acepté ver una peli con vos ❤️🎬";
+            if (genre) {
+                baseMessage = `Acepté ver una peli con vos ❤️🎬 (Elegí género: ${genre})`;
+            }
+            const waUrl = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(baseMessage)}`;
+            btnWhatsApp.setAttribute('href', waUrl);
+            btnWhatsApp.setAttribute('target', '_blank');
+            btnWhatsApp.setAttribute('rel', 'noopener noreferrer');
+        }
+
+        genreButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                genreButtons.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+
+                selectedGenre = btn.getAttribute('data-genre');
+                const isChristmas = btn.getAttribute('data-type') === 'christmas';
+
+                // Mostrar tarjeta de feedback personalizada
+                genreFeedback.style.display = 'block';
+
+                if (isChristmas) {
+                    feedbackTitle.textContent = "¡Sabía que ibas a elegir una navideña! 🎄😂❤️";
+                    feedbackDesc.textContent = "Sé que te gustan las pelis navideñas, así que era obligatorio poner esta opción. ¡Es un plan perfecto!";
+                    launchBurst(window.innerWidth / 2, window.innerHeight * 0.45, 60);
+                } else {
+                    feedbackTitle.textContent = `¡Buena elección con ${selectedGenre}! 🎬✨`;
+                    feedbackDesc.textContent = "Admito que pensé que ibas a elegir una navideña 😉🎄, ¡pero esta opción me encanta también!";
+                }
+
+                // Actualizar WhatsApp y mostrar botón
+                updateWhatsAppLink(selectedGenre);
+                btnWhatsApp.classList.add('visible');
+                btnWhatsAppText.textContent = `Confirmar por WhatsApp (${selectedGenre}) ❤️`;
+            });
+        });
+
+        /* ============================================================
+           CANVAS DE FONDO: CORAZONES, ESTRELLAS Y ELEMENTOS DE CINE
+           ============================================================ */
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        let bgWidth, bgHeight;
+        function resizeBg() {
+            bgWidth = bgCanvas.width = window.innerWidth;
+            bgHeight = bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        const floatingItems = [];
+        // Solo corazones, cine y estrellas (sin pochoclos)
+        const itemIcons = ['❤️', '💖', '🎬', '✨', '💕', '⭐', '🎥'];
+
+        class FloatingItem {
+            constructor() {
+                this.reset(true);
+            }
+
+            reset(initial = false) {
+                this.x = Math.random() * bgWidth;
+                this.y = initial ? Math.random() * bgHeight : bgHeight + 30;
+                this.speed = 0.4 + Math.random() * 0.9;
+                this.size = 12 + Math.random() * 18;
+                this.icon = itemIcons[Math.floor(Math.random() * itemIcons.length)];
+                this.opacity = 0.14 + Math.random() * 0.32;
+                this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = 0.02 + Math.random() * 0.03;
+                this.wobbleRadius = 15 + Math.random() * 25;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.wobble += this.wobbleSpeed;
+                this.currentX = this.x + Math.sin(this.wobble) * this.wobbleRadius;
+
+                if (this.y < -40) {
+                    this.reset(false);
+                }
+            }
+
+            draw() {
+                bgCtx.save();
+                bgCtx.font = `${this.size}px sans-serif`;
+                bgCtx.globalAlpha = this.opacity;
+                bgCtx.fillText(this.icon, this.currentX, this.y);
+                bgCtx.restore();
+            }
+        }
+
+        for (let i = 0; i < 22; i++) {
+            floatingItems.push(new FloatingItem());
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgWidth, bgHeight);
+            floatingItems.forEach(item => {
+                item.update();
+                item.draw();
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        /* ============================================================
+           SISTEMA DE CONFETI Y CORAZONES CELEBRATORIOS
+           ============================================================ */
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const cCtx = confettiCanvas.getContext('2d');
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        let confettiParticles = [];
+        let isCelebrating = false;
+
+        const confettiColors = ['#ff3366', '#ff758c', '#ffd166', '#ffffff', '#a855f7', '#38bdf8', '#2ecc71'];
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 4 + Math.random() * 11;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed - 3;
+                
+                this.gravity = 0.22;
+                this.friction = 0.96;
+                this.size = 7 + Math.random() * 8;
+                this.opacity = 1;
+                this.decay = 0.007 + Math.random() * 0.009;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 12;
+
+                this.type = Math.random() > 0.4 ? (Math.random() > 0.5 ? 1 : 0) : 2;
+            }
+
+            update() {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += this.rotSpeed;
+                this.opacity -= this.decay;
+            }
+
+            draw() {
+                if (this.opacity <= 0) return;
+                cCtx.save();
+                cCtx.translate(this.x, this.y);
+                cCtx.rotate((this.rotation * Math.PI) / 180);
+                cCtx.globalAlpha = Math.max(0, this.opacity);
+                cCtx.fillStyle = this.color;
+
+                if (this.type === 0) {
+                    cCtx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+                } else if (this.type === 1) {
+                    const s = this.size * 0.8;
+                    cCtx.beginPath();
+                    cCtx.moveTo(0, s / 4);
+                    cCtx.quadraticCurveTo(0, 0, s / 4, 0);
+                    cCtx.quadraticCurveTo(s / 2, 0, s / 2, s / 4);
+                    cCtx.quadraticCurveTo(s / 2, 0, (3 * s) / 4, 0);
+                    cCtx.quadraticCurveTo(s, 0, s, s / 4);
+                    cCtx.quadraticCurveTo(s, s / 2, (3 * s) / 4, (3 * s) / 4);
+                    cCtx.lineTo(s / 2, s);
+                    cCtx.lineTo(s / 4, (3 * s) / 4);
+                    cCtx.quadraticCurveTo(0, s / 2, 0, s / 4);
+                    cCtx.fill();
+                } else {
+                    cCtx.beginPath();
+                    cCtx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                    cCtx.fill();
+                }
+                cCtx.restore();
+            }
+        }
+
+        function launchBurst(x, y, count = 75) {
+            for (let i = 0; i < count; i++) {
+                confettiParticles.push(new Particle(x, y));
+            }
+        }
+
+        function startConfettiCelebration() {
+            if (isCelebrating) return;
+            isCelebrating = true;
+
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+
+            launchBurst(cx, cy, 110);
+            setTimeout(() => launchBurst(cx - 100, cy - 80, 70), 200);
+            setTimeout(() => launchBurst(cx + 100, cy - 80, 70), 450);
+            setTimeout(() => launchBurst(cx, cy - 120, 90), 800);
+
+            let extraBursts = 0;
+            const interval = setInterval(() => {
+                const rx = window.innerWidth * (0.2 + Math.random() * 0.6);
+                const ry = window.innerHeight * (0.2 + Math.random() * 0.4);
+                launchBurst(rx, ry, 40);
+                extraBursts++;
+                if (extraBursts >= 5) {
+                    clearInterval(interval);
+                }
+            }, 600);
+
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (let i = confettiParticles.length - 1; i >= 0; i--) {
+                const p = confettiParticles[i];
+                p.update();
+                p.draw();
+                if (p.opacity <= 0 || p.y > confettiCanvas.height + 40) {
+                    confettiParticles.splice(i, 1);
+                }
+            }
+
+            if (confettiParticles.length > 0) {
+                requestAnimationFrame(animateConfetti);
+            } else {
+                isCelebrating = false;
+            }
+        }
+    </script>
+</body>
+</html>
